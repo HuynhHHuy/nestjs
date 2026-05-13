@@ -1,10 +1,14 @@
-import { Body, Controller, Delete, Get, Headers, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Headers, HttpCode, Param, Patch, Post, Query } from '@nestjs/common';
 
 @Controller('todos')
 export class TodosController {
     @Get()
-    findAll(): string {
-        return 'This action returns all todos';
+    findAll(
+        @Query('priority') priority?: 'HIGH' | 'MEDIUM' | 'LOW',
+        @Query('limit') limit?: string,
+        @Query('page') page?: string,
+    ): string {
+        return `Lay todos voi quality: ${priority}, limit: ${limit}, page: ${page}`;
     }
 
     @Get(':id')
@@ -25,6 +29,7 @@ export class TodosController {
         return `This action updates the todo with ID: ${id} with the following data: ${JSON.stringify(body)}`;
     }
 
+    @HttpCode(204)
     @Delete(':id')
     delete(@Param('id') id: string) {
         return `This action deletes the todo with ID: ${id}`;
