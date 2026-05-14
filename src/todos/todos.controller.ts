@@ -1,14 +1,15 @@
 import { Body, Controller, Delete, Get, Headers, HttpCode, Param, Patch, Post, Query } from '@nestjs/common';
+import { CreateTodoDto } from './dto/create-todo.dto/create-todo.dto';
+import { UpdateTodoDto } from './dto/update-todo.dto/update-todo.dto';
+import { QueryParamsDto } from './dto/query-params.dto/query-params.dto';
 
 @Controller('todos')
 export class TodosController {
     @Get()
     findAll(
-        @Query('priority') priority?: 'HIGH' | 'MEDIUM' | 'LOW',
-        @Query('limit') limit?: string,
-        @Query('page') page?: string,
-    ): string {
-        return `Lay todos voi quality: ${priority}, limit: ${limit}, page: ${page}`;
+        @Query() queryParamsDto: QueryParamsDto
+    ) {
+        return `Lay todos voi quality: ${queryParamsDto.priority}, limit: ${queryParamsDto.limit}, page: ${queryParamsDto.page}`;
     }
 
     @Get(':id')
@@ -17,16 +18,16 @@ export class TodosController {
     }
 
     @Post()
-    create(@Body() body: any, @Headers('authorization') auth: string) {
+    create(@Body() CreateTodoDto: CreateTodoDto, @Headers('authorization') auth: string) {
         if (auth) {
-            return `This action creates a new todo with the following data: ${JSON.stringify(body)} and authorization header: ${auth}`;
+            return `This action creates a new todo with the following data: ${JSON.stringify(CreateTodoDto.title)} and authorization header: ${auth}`;
         }
         return "Vui long cung cap header authorization";
     }
 
     @Patch(':id')
-    update(@Param('id') id: string, @Body() body: any) {
-        return `This action updates the todo with ID: ${id} with the following data: ${JSON.stringify(body)}`;
+    update(@Param('id') id: string, @Body() UpdateTodoDto: UpdateTodoDto) {
+        return `This action updates the todo with ID: ${id} with the following data: ${JSON.stringify(UpdateTodoDto)}`;
     }
 
     @HttpCode(204)
