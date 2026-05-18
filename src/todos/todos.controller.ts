@@ -1,7 +1,7 @@
-import { Body, Controller, Delete, Get, Headers, HttpCode, Param, Patch, Post, Query } from '@nestjs/common';
-import { CreateTodoDto } from './dto/create-todo.dto/create-todo.dto';
-import { UpdateTodoDto } from './dto/update-todo.dto/update-todo.dto';
-import { QueryParamsDto } from './dto/query-params.dto/query-params.dto';
+import { Body, Controller, Delete, Get, Headers, HttpCode, Param, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
+import { CreateTodoDto } from './dto/create-todo.dto';
+import { UpdateTodoDto } from './dto/update-todo.dto';
+import { QueryParamsDto } from './dto/query-params.dto';
 
 @Controller('todos')
 export class TodosController {
@@ -13,26 +13,26 @@ export class TodosController {
     }
 
     @Get(':id')
-    getById(@Param() params: { id: string }): string {
-        return `This action returns the todo with ID: ${params.id}`;
+    getById(@Param('id', ParseIntPipe) id: number): string {
+        return `This action returns the todo with ID: ${id}`;
     }
 
     @Post()
     create(@Body() CreateTodoDto: CreateTodoDto, @Headers('authorization') auth: string) {
         if (auth) {
-            return `This action creates a new todo with the following data: ${JSON.stringify(CreateTodoDto.title)} and authorization header: ${auth}`;
+            return `This action creates a new todo with the following data: ${JSON.stringify(CreateTodoDto)} and authorization header: ${auth}`;
         }
         return "Vui long cung cap header authorization";
     }
 
     @Patch(':id')
-    update(@Param('id') id: string, @Body() UpdateTodoDto: UpdateTodoDto) {
+    update(@Param('id', ParseIntPipe) id: number, @Body() UpdateTodoDto: UpdateTodoDto) {
         return `This action updates the todo with ID: ${id} with the following data: ${JSON.stringify(UpdateTodoDto)}`;
     }
 
     @HttpCode(204)
     @Delete(':id')
-    delete(@Param('id') id: string) {
+    delete(@Param('id', ParseIntPipe) id: number) {
         return `This action deletes the todo with ID: ${id}`;
     }
 }
