@@ -5,9 +5,11 @@ import { UpdateTodoDto } from './dto/update-todo.dto';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { TodoStatus } from './enum/todo-status.enum';
 import { TodoPriority } from './enum/todo-priority.enum';
+import { Injectable } from '@nestjs/common';
 
 const TODOS_FILE = path.join(__dirname, 'todos.json');
 
+@Injectable()
 export class TodoRepository {
     private readFromFile(): Todo[] {
         const data = fs.readFileSync(TODOS_FILE, 'utf-8');

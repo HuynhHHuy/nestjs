@@ -2,37 +2,38 @@ import { Body, Controller, Delete, Get, Headers, HttpCode, Param, ParseIntPipe, 
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { QueryParamsDto } from './dto/query-params.dto';
+import { TodoService } from './todos.service';
 
 @Controller('todos')
 export class TodosController {
+
+    constructor(private todosService: TodoService) { }
+
     @Get()
     findAll(
         @Query() queryParamsDto: QueryParamsDto
     ) {
-        return `Lay todos voi quality: ${queryParamsDto.priority}, limit: ${queryParamsDto.limit}, page: ${queryParamsDto.page}`;
+        return this.todosService.findAll(queryParamsDto);
     }
 
     @Get(':id')
-    getById(@Param('id', ParseIntPipe) id: number): string {
-        return `This action returns the todo with ID: ${id}`;
+    getById(@Param('id', ParseIntPipe) id: number) {
+        return this.todosService.findById(id);
     }
 
     @Post()
     create(@Body() CreateTodoDto: CreateTodoDto, @Headers('authorization') auth: string) {
-        if (auth) {
-            return `This action creates a new todo with the following data: ${JSON.stringify(CreateTodoDto)} and authorization header: ${auth}`;
-        }
-        return "Vui long cung cap header authorization";
+        return this.todosService.create(CreateTodoDto);
     }
 
     @Patch(':id')
     update(@Param('id', ParseIntPipe) id: number, @Body() UpdateTodoDto: UpdateTodoDto) {
-        return `This action updates the todo with ID: ${id} with the following data: ${JSON.stringify(UpdateTodoDto)}`;
+        return this.todosService.update(id, UpdateTodoDto);
     }
 
     @HttpCode(204)
     @Delete(':id')
     delete(@Param('id', ParseIntPipe) id: number) {
-        return `This action deletes the todo with ID: ${id}`;
+        return this.todosService.delete(id);
     }
 }
