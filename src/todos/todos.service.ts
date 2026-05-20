@@ -1,14 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { Todo } from "src/entities/todo.entity";
+import { Todo } from "src/todos/entities/todo.entity";
 import { QueryParamsDto } from "./dto/query-params.dto";
 import { TodoRepository } from "./todos.repository";
 import { CreateTodoDto } from "./dto/create-todo.dto";
 import { UpdateTodoDto } from "./dto/update-todo.dto";
+import { CategoriesService } from 'src/categories/categories.service';
 
 @Injectable()
 export class TodoService {
 
-    constructor(private todoRepository: TodoRepository) { }
+    constructor(
+        private todoRepository: TodoRepository,
+        private readonly categoriesService: CategoriesService
+    ) { }
 
     findAll(queryParamsDto: QueryParamsDto): Todo[] {
         let todos = this.todoRepository.findAll();

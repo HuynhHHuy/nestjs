@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { Todo } from 'src/entities/todo.entity';
+import { Todo } from 'src/todos/entities/todo.entity';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { TodoStatus } from './enum/todo-status.enum';
