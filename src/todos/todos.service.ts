@@ -1,4 +1,4 @@
-import { HttpCode, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { Todo } from "src/todos/entities/todo.entity";
 import { QueryParamsDto } from "./dto/query-params.dto";
 import { TodoRepository } from "./todos.repository";
@@ -6,6 +6,7 @@ import { CreateTodoDto } from "./dto/create-todo.dto";
 import { UpdateTodoDto } from "./dto/update-todo.dto";
 import { CategoriesService } from 'src/categories/categories.service';
 import { UsersService } from 'src/users/users.service';
+import { TodoNotFoundException } from './exceptions/todo-not-found.exception';
 
 @Injectable()
 export class TodoService {
@@ -31,7 +32,7 @@ export class TodoService {
         const todo = this.todoRepository.findById(id);
 
         if (!todo) {
-            throw new Error(`Todo with ID ${id} not found`);
+            throw new TodoNotFoundException(id);
         }
 
         return todo;
@@ -40,13 +41,35 @@ export class TodoService {
     create(createTodoDto: CreateTodoDto): Todo {
         const user = this.usersService.findById(createTodoDto.userId);
         if (!user) {
-            throw new Error(`Không tìm thấy user với id ${createTodoDto.userId}`);
+            throw new NotFoundException({
+                message: `User with ID ${createTodoDto.userId} not found`,
+                errorCode: 'USER_NOT_FOUND',
+                field: 'userId',
+                statusCode: 404
+            });
         }
 
         if (createTodoDto.categoryId) {
             const category = this.categoriesService.findById(createTodoDto.categoryId);
             if (!category) {
-                throw new HttpException(`Không tìm thấy category với id ${createTodoDto.categoryId}`, HttpStatus.NOT_FOUND);
+                throw new NotFoundException({
+                    message: `Category with ID ${createTodoDto.categoryId} not found`,
+                    errorCode: 'CATEGORY_NOT_FOUND',
+                    field: 'categoryId',
+                    statusCode: 404
+                });
+            }
+        }
+
+        if (createTodoDto.title) {
+            const existingTodos = this.todoRepository.findByTitle(createTodoDto.title);
+            if (existingTodos) {
+                throw new BadRequestException({
+                    message: `A todo with the title "${createTodoDto.title}" already exists`,
+                    errorCode: 'TODO_TITLE_EXISTS',
+                    field: 'title',
+                    statusCode: 400
+                });
             }
         }
         return this.todoRepository.create(createTodoDto);
@@ -56,7 +79,7 @@ export class TodoService {
         const todo = this.todoRepository.findById(id);
 
         if (!todo) {
-            throw new Error(`Todo with ID ${id} not found`);
+            throw new TodoNotFoundException(id);
         }
 
         return this.todoRepository.update(id, updatedTodoDto);
@@ -66,9 +89,8 @@ export class TodoService {
         const todo = this.todoRepository.findById(id);
 
         if (!todo) {
-            throw new Error(`Todo with ID ${id} not found`);
+            throw new TodoNotFoundException(id);
         }
-
         return this.todoRepository.delete(id);
     }
 }
