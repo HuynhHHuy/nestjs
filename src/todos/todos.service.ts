@@ -1,17 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import { HttpCode, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Todo } from "src/todos/entities/todo.entity";
 import { QueryParamsDto } from "./dto/query-params.dto";
 import { TodoRepository } from "./todos.repository";
 import { CreateTodoDto } from "./dto/create-todo.dto";
 import { UpdateTodoDto } from "./dto/update-todo.dto";
 import { CategoriesService } from 'src/categories/categories.service';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class TodoService {
 
     constructor(
         private todoRepository: TodoRepository,
-        private readonly categoriesService: CategoriesService
+        private readonly categoriesService: CategoriesService,
+        private readonly usersService: UsersService
     ) { }
 
     findAll(queryParamsDto: QueryParamsDto): Todo[] {
@@ -36,6 +38,17 @@ export class TodoService {
     }
 
     create(createTodoDto: CreateTodoDto): Todo {
+        const user = this.usersService.findById(createTodoDto.userId);
+        if (!user) {
+            throw new Error(`Không tìm thấy user với id ${createTodoDto.userId}`);
+        }
+
+        if (createTodoDto.categoryId) {
+            const category = this.categoriesService.findById(createTodoDto.categoryId);
+            if (!category) {
+                throw new HttpException(`Không tìm thấy category với id ${createTodoDto.categoryId}`, HttpStatus.NOT_FOUND);
+            }
+        }
         return this.todoRepository.create(createTodoDto);
     }
 

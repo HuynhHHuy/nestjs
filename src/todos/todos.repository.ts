@@ -39,6 +39,7 @@ export class TodoRepository {
             status: createTodoDto.status ?? TodoStatus.OPEN,
             priority: createTodoDto.priority ?? TodoPriority.MEDIUM,
             categoryId: createTodoDto.categoryId ?? 0,
+            userId: createTodoDto.userId,
             createdAt: new Date(),
             updatedAt: new Date(),
         };
