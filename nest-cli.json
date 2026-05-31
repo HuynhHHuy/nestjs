@@ -5,10 +5,7 @@
   "compilerOptions": {
     "deleteOutDir": true,
     "assets": [
-      {
-        "include": "todos/todos.json",
-        "outDir": "dist"
-      }
+      "seeds/*.json"
     ]
   }
 }
