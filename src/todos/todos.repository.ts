@@ -35,23 +35,23 @@ export class TodoRepository {
         return todos.filter(todo => todo.title.toLowerCase().includes(title.toLowerCase()));
     }
 
-    create(createTodoDto: CreateTodoDto): Todo {
-        const todos = this.readFromFile();
-        const newTodo: Todo = {
-            id: this.getNextId(todos),
-            title: createTodoDto.title ?? '',
-            description: createTodoDto.description ?? '',
-            status: createTodoDto.status ?? TodoStatus.OPEN,
-            priority: createTodoDto.priority ?? TodoPriority.MEDIUM,
-            categoryId: createTodoDto.categoryId ?? 0,
-            userId: createTodoDto.userId,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-        };
-        todos.push(newTodo);
-        this.writeToFile(todos);
-        return newTodo;
-    }
+    // create(createTodoDto: CreateTodoDto): Todo {
+    //     const todos = this.readFromFile();
+    //     const newTodo: Todo = {
+    //         id: this.getNextId(todos),
+    //         title: createTodoDto.title ?? '',
+    //         description: createTodoDto.description ?? '',
+    //         status: createTodoDto.status ?? TodoStatus.OPEN,
+    //         priority: createTodoDto.priority ?? TodoPriority.MEDIUM,
+    //         categoryId: createTodoDto.categoryId ?? 0,
+    //         userId: createTodoDto.userId,
+    //         createdAt: new Date(),
+    //         updatedAt: new Date(),
+    //     };
+    //     todos.push(newTodo);
+    //     this.writeToFile(todos);
+    //     return newTodo;
+    // }
 
     update(id: number, updatedTodoDto: UpdateTodoDto): Todo | undefined {
         const todos = this.readFromFile();

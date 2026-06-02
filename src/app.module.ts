@@ -23,6 +23,7 @@ import { Category } from "./categories/entities/category.entity";
             database: process.env.DB_NAME,
             entities: [Todo, User, Category],
             synchronize: true,
+            logging: true,
         })],
 })
 export class AppModule { }

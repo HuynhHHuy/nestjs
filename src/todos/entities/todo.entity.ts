@@ -1,6 +1,8 @@
+import { Category } from "src/categories/entities/category.entity";
 import { TodoPriority } from "src/todos/enum/todo-priority.enum";
 import { TodoStatus } from "src/todos/enum/todo-status.enum";
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { User } from "src/users/entities/user.entity";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
 export class Todo {
@@ -23,15 +25,23 @@ export class Todo {
     @Column({
         type: 'enum',
         enum: TodoPriority,
-        default: TodoPriority.MEDIUM
+        nullable: true
     })
     priority!: TodoPriority;
 
     @Column()
     userId!: number;
 
+    @ManyToOne(() => User, user => user.todos)
+    @JoinColumn({ name: 'userId' })
+    user!: User;
+
     @Column({ nullable: true })
     categoryId!: number;
+
+    @ManyToOne(() => Category, { nullable: true })
+    @JoinColumn({ name: 'categoryId' })
+    category!: Category;
 
     @CreateDateColumn()
     createdAt!: Date;

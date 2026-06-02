@@ -20,19 +20,24 @@ export class TodoService {
     ) { }
 
     async findAll(queryParamsDto: QueryParamsDto): Promise<Todo[]> {
-        let todos = await this.todoRepository.find();
-
-        if (queryParamsDto.priority) {
-            todos = todos.filter(todo => todo.priority === queryParamsDto.priority);
-        }
         const page = queryParamsDto.page ?? 1;
         const limit = queryParamsDto.limit ?? 10;
         const startIndex = (page - 1) * limit;
-        return todos.slice(startIndex, startIndex + limit);
+
+        const where = queryParamsDto.priority ? { priority: queryParamsDto.priority } : {};
+
+        let todos = await this.todoRepository.find({
+            where,
+            take: limit,
+            skip: startIndex,
+            relations: { user: true, category: true },
+        });
+
+        return todos;
     }
 
     async findById(id: number): Promise<Todo | undefined> {
-        const todo = await this.todoRepository.findOne({ where: { id } });
+        const todo = await this.todoRepository.findOne({ where: { id }, relations: { user: true, category: true } });
 
         if (!todo) {
             throw new TodoNotFoundException(id);
