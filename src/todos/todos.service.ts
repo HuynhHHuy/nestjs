@@ -47,7 +47,7 @@ export class TodoService {
     }
 
     async create(createTodoDto: CreateTodoDto): Promise<Todo> {
-        const user = this.usersService.findById(createTodoDto.userId);
+        const user = await this.usersService.findById(createTodoDto.userId);
         if (!user) {
             throw new NotFoundException({
                 message: `User with ID ${createTodoDto.userId} not found`,
@@ -58,7 +58,7 @@ export class TodoService {
         }
 
         if (createTodoDto.categoryId) {
-            const category = this.categoriesService.findById(createTodoDto.categoryId);
+            const category = await this.categoriesService.findById(createTodoDto.categoryId);
             if (!category) {
                 throw new NotFoundException({
                     message: `Category with ID ${createTodoDto.categoryId} not found`,
@@ -84,6 +84,18 @@ export class TodoService {
     }
 
     async update(id: number, updatedTodoDto: UpdateTodoDto): Promise<Todo | undefined> {
+        if (updatedTodoDto.categoryId) {
+            const category = await this.categoriesService.findById(updatedTodoDto.categoryId);
+            if (!category) {
+                throw new NotFoundException({
+                    message: `Category with ID ${updatedTodoDto.categoryId} not found`,
+                    errorCode: 'CATEGORY_NOT_FOUND',
+                    field: 'categoryId',
+                    statusCode: 404
+                });
+            }
+        }
+
         const todo = await this.todoRepository.findOne({ where: { id } });
 
         if (!todo) {
