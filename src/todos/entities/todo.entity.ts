@@ -2,8 +2,11 @@ import { Category } from "src/categories/entities/category.entity";
 import { TodoPriority } from "src/todos/enum/todo-priority.enum";
 import { TodoStatus } from "src/todos/enum/todo-status.enum";
 import { User } from "src/users/entities/user.entity";
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
+@Index(['userId'])
+@Index(['categoryId'])
+@Index(['userId', 'title'])
 @Entity()
 export class Todo {
     @PrimaryGeneratedColumn()
@@ -27,6 +30,7 @@ export class Todo {
         enum: TodoPriority,
         nullable: true
     })
+    @Index('idx_todo_priority', { where: `"priority" = 'HIGH'` })
     priority!: TodoPriority;
 
     @Column()
