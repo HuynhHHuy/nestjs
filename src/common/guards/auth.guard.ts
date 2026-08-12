@@ -1,0 +1,17 @@
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
+import { Request } from "express";
+
+@Injectable()
+export class AuthGuard implements CanActivate {
+    canActivate(context: ExecutionContext): boolean {
+        const request = context.switchToHttp().getRequest<Request>();
+        const token = request.headers['authorization']?.split(' ')[1];
+
+        if (!token) {
+            throw new UnauthorizedException('No token provided');
+        }
+
+        request.userId = 1;
+        return true;
+    }
+}
