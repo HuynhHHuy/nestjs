@@ -1,10 +1,11 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { TodosController } from './todos.controller';
 import { TodoService } from './todos.service';
 import { CategoriesModule } from 'src/categories/categories.module';
 import { UsersModule } from 'src/users/users.module';
 import { Todo } from './entities/todo.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { requestIdMiddleware } from 'src/common/middleware/request-id.middleware';
 
 @Module({
   controllers: [TodosController],
@@ -12,4 +13,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
   exports: [TodoService],
   imports: [CategoriesModule, UsersModule, TypeOrmModule.forFeature([Todo])],
 })
-export class TodosModule { }
+export class TodosModule {
+  // configure(consumer: MiddlewareConsumer) {
+  //   consumer.apply(requestIdMiddleware).forRoutes('todos');
+  // }
+}
