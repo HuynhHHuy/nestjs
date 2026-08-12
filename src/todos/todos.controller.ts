@@ -1,9 +1,10 @@
-import { Body, Controller, Delete, Get, Headers, HttpCode, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Headers, HttpCode, Param, ParseIntPipe, Patch, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { QueryParamsDto } from './dto/query-params.dto';
 import { TodoService } from './todos.service';
 import { TodoOwnershipGuard } from './guards/todo-ownership.guard';
+import { TimingInterceptor } from 'src/common/interceptors/timing.interceptor';
 
 @Controller('todos')
 export class TodosController {
@@ -11,6 +12,7 @@ export class TodosController {
     constructor(private todosService: TodoService) { }
 
     @Get()
+    @UseInterceptors(TimingInterceptor)
     findAll(
         @Query() queryParamsDto: QueryParamsDto
     ) {

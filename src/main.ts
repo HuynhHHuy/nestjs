@@ -4,6 +4,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { requestIdMiddleware } from './common/middleware/request-id.middleware';
 import { AuthGuard } from './common/guards/auth.guard';
+import { TimingInterceptor } from './common/interceptors/timing.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -19,6 +20,7 @@ async function bootstrap() {
     transform: true,
   }));
 
+  // app.useGlobalInterceptors(new TimingInterceptor());
   app.useGlobalFilters(new HttpExceptionFilter());
   await app.listen(process.env.PORT ?? 3000);
 }
