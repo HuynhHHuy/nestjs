@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Todo } from "src/todos/entities/todo.entity";
 import { QueryParamsDto } from "./dto/query-params.dto";
 import { CreateTodoDto } from "./dto/create-todo.dto";
@@ -9,6 +9,7 @@ import { TodoNotFoundException } from './exceptions/todo-not-found.exception';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
+import { TODOS_CONFIG, type TodosConfig } from 'src/types/todos';
 
 @Injectable()
 export class TodoService {
@@ -19,11 +20,13 @@ export class TodoService {
         private readonly categoriesService: CategoriesService,
         private readonly usersService: UsersService,
         private readonly dataSource: DataSource,
+
+        @Inject(TODOS_CONFIG) private readonly config: TodosConfig,
     ) { }
 
     async findAll(queryParamsDto: QueryParamsDto): Promise<Todo[]> {
         const page = queryParamsDto.page ?? 1;
-        const limit = queryParamsDto.limit ?? 10;
+        const limit = queryParamsDto.limit ?? this.config.defaultPageSize;
         const startIndex = (page - 1) * limit;
 
         const where = queryParamsDto.priority ? { priority: queryParamsDto.priority } : {};
